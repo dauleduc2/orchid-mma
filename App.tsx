@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import OrchidTabScreen from "./screens/OrchidTab";
+import FavoriteTabScreen from "./screens/FavoriteTab";
+import Icon from "react-native-vector-icons/Entypo";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === "Orchid") {
+              return <Icon name="flower" size={size} color={color} />;
+            } else if (route.name === "Favorite") {
+              return (
+                <MaterialIcons
+                  name="favorite-outline"
+                  size={size}
+                  color={color}
+                />
+              );
+            }
+          },
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="Orchid" component={OrchidTabScreen} />
+        <Tab.Screen name="Favorite" component={FavoriteTabScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
