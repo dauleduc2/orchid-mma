@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useCallback, useContext } from "react";
 import HeartIcon from "./HeartIcon";
+import { MyContext } from "../App";
+import { FavoriteState } from "./context";
 
 export interface Orchid {
   id: string;
@@ -18,15 +20,22 @@ interface Props {
   data: Orchid;
   isFavorite?: boolean;
   navigation: any;
+  needConfirm?: boolean;
 }
-const OrchidBox = ({ data, isFavorite = false, navigation }: Props) => {
+
+const OrchidBox = ({
+  data,
+  isFavorite = false,
+  navigation,
+  needConfirm,
+}: Props) => {
   const { id, name, price, type, path } = data;
-  const onClick = () => {
+  const onClick = useCallback(() => {
     navigation.navigate("Detail", {
       orchid: data,
       isFavorite,
     });
-  };
+  }, [isFavorite, data]);
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={styles.container}>
@@ -47,6 +56,7 @@ const OrchidBox = ({ data, isFavorite = false, navigation }: Props) => {
           wrapperStyles={styles.icon}
           id={id}
           isFavorite={isFavorite}
+          needConfirm={needConfirm}
         />
       </View>
     </TouchableOpacity>

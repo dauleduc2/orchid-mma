@@ -5,44 +5,35 @@ import OrchidTabScreen from "./screens/OrchidTab";
 import FavoriteTabScreen from "./screens/FavoriteTab";
 import Icon from "react-native-vector-icons/Entypo";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import data from "./data.json";
 import { OrchidWithFavorite } from "./screens/OrchidBox";
 import useGetFavoriteList from "./screens/useGetFavoriteList";
-import { isFavorite } from "./utils/store";
-
+import { FavoriteState } from "./screens/context";
 const Tab = createBottomTabNavigator();
 
-export interface AppContextProps {
-  orchidWithFavorite: OrchidWithFavorite[];
-  setOrchidWithFavorite?: React.Dispatch<
-    React.SetStateAction<OrchidWithFavorite[]>
-  >;
-}
-export const appContext = React.createContext<AppContextProps>({
-  orchidWithFavorite: [],
+export const MyContext = React.createContext<FavoriteState>({
+  favoriteList: [],
+  dataListWithFavorite: [],
 });
 
 export default function App() {
-  const { favoriteList } = useGetFavoriteList();
-  const [orchidWithFavorite, setOrchidWithFavorite] = React.useState<
+  const [dataListWithFavorite, setDataListWithFavorite] = React.useState<
     OrchidWithFavorite[]
   >([]);
-
-  const dataWithFavorite = React.useMemo(
-    () =>
-      data.orchids.map<OrchidWithFavorite>((orchid) => ({
-        ...orchid,
-        isFavorite: isFavorite(favoriteList, orchid.id),
-      })),
-    [data, favoriteList]
-  );
+  const { dataWithFavorite, favoriteList, setFavoriteList } =
+    useGetFavoriteList();
 
   React.useEffect(() => {
-    setOrchidWithFavorite(dataWithFavorite);
+    setDataListWithFavorite(dataWithFavorite);
   }, [dataWithFavorite]);
-
   return (
-    <appContext.Provider value={{ orchidWithFavorite, setOrchidWithFavorite }}>
+    <MyContext.Provider
+      value={{
+        dataListWithFavorite,
+        setDataListWithFavorite,
+        favoriteList,
+        setFavoriteList,
+      }}
+    >
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
@@ -66,6 +57,6 @@ export default function App() {
           <Tab.Screen name="Favorite" component={FavoriteTabScreen} />
         </Tab.Navigator>
       </NavigationContainer>
-    </appContext.Provider>
+    </MyContext.Provider>
   );
 }

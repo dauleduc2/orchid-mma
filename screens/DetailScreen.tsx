@@ -1,8 +1,10 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { Orchid } from "./OrchidBox";
+import { Orchid, OrchidWithFavorite } from "./OrchidBox";
 import HeartIcon from "./HeartIcon";
+import { FavoriteState } from "./context";
+import { MyContext } from "../App";
 
 export type DetailParam = {
   orchid: Orchid;
@@ -16,24 +18,32 @@ type ProductDetailProps = {
 };
 
 const DetailScreen = ({ route }: ProductDetailProps) => {
-  const { orchid, isFavorite } = route.params;
-  const { id, name, path, price, type } = orchid;
+  const { dataListWithFavorite } = useContext<FavoriteState>(MyContext);
+  const {
+    orchid: { id },
+  } = route.params;
+
+  const orchid = useMemo<OrchidWithFavorite | undefined>(() => {
+    if (!dataListWithFavorite) return;
+
+    return dataListWithFavorite.find((item) => item.id === id);
+  }, [dataListWithFavorite]);
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: path }} style={styles.avatar} />
+      <Image source={{ uri: orchid?.path }} style={styles.avatar} />
       <View>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.price}>Price: {price}</Text>
-        <Text style={styles.type}>Type: {type}</Text>
+        <Text style={styles.name}>{orchid?.name}</Text>
+        <Text style={styles.price}>Price: {orchid?.price}</Text>
+        <Text style={styles.type}>Type: {orchid?.type}</Text>
         <HeartIcon
           wrapperStyles={styles.icon}
           size={100}
           id={id}
-          isFavorite={isFavorite}
+          isFavorite={orchid?.isFavorite}
+          needConfirm
         />
       </View>
-      {/* Add additional details or functionality as needed */}
     </View>
   );
 };

@@ -1,30 +1,30 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import data from "../data.json";
-import OrchidBox, { OrchidWithFavorite } from "./OrchidBox";
-import { isFavorite } from "../utils/store";
-import useGetFavoriteList from "./useGetFavoriteList";
-import { AppContextProps, appContext } from "../App";
+import OrchidBox from "./OrchidBox";
+import { FavoriteState } from "./context";
+import { MyContext } from "../App";
 
-export default function OrchidList({
-  navigation,
-}: NativeStackScreenProps<any>) {
-  const { orchidWithFavorite } = useContext<AppContextProps>(appContext);
+type Props = NativeStackScreenProps<any>;
 
+export default function OrchidList({ navigation }: Props) {
+  const { dataListWithFavorite } = useContext<FavoriteState>(MyContext);
   return (
     <View style={styles.container}>
       <FlatList
-        data={orchidWithFavorite}
+        data={dataListWithFavorite}
         renderItem={({ item }) => (
           <OrchidBox
             data={item}
             isFavorite={item.isFavorite}
             navigation={navigation}
+            needConfirm
           />
         )}
         numColumns={1}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => {
+          return item.id;
+        }}
       />
     </View>
   );
