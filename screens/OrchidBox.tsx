@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import HeartIcon from "./HeartIcon";
 
 export interface Orchid {
@@ -11,13 +10,17 @@ export interface Orchid {
   type: string;
 }
 
+export interface OrchidWithFavorite extends Orchid {
+  isFavorite: boolean;
+}
+
 interface Props {
   data: Orchid;
   isFavorite?: boolean;
   navigation: any;
 }
 const OrchidBox = ({ data, isFavorite = false, navigation }: Props) => {
-  const { id, name, path, price, type } = data;
+  const { id, name, price, type, path } = data;
   const onClick = () => {
     navigation.navigate("Detail", {
       orchid: data,
@@ -27,7 +30,12 @@ const OrchidBox = ({ data, isFavorite = false, navigation }: Props) => {
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={styles.container}>
-        <Image source={{ uri: path }} style={styles.avatar} />
+        <Image
+          source={{
+            uri: path,
+          }}
+          style={styles.avatar}
+        />
         <View style={styles.detailsContainer}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.price}>Price: {price}</Text>

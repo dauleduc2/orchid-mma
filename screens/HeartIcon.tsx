@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { TouchableOpacity } from "react-native";
+import { addFavorite, removeFavorite } from "../utils/store";
+import { appContext, AppContextProps } from "../App";
 interface Props {
   isFavorite?: boolean;
   wrapperStyles?: any;
@@ -9,8 +11,22 @@ interface Props {
 }
 
 const HeartIcon = ({ isFavorite, id, wrapperStyles, size = 40 }: Props) => {
+  const { orchidWithFavorite, setOrchidWithFavorite } = useContext(appContext);
+
+  const currentOrchid = orchidWithFavorite?.find((item) => item.id === id);
+
   const onClick = () => {
-    // TODO: Implement favorite functionality
+    if (isFavorite) {
+      console.log(isFavorite);
+      setOrchidWithFavorite?.((prev) => {
+        return prev.filter((item) => item.id !== id);
+      });
+      return removeFavorite(id);
+    }
+    if (currentOrchid)
+      setOrchidWithFavorite?.((prev) => [...prev, currentOrchid]);
+
+    return addFavorite(id);
   };
   return (
     <TouchableOpacity style={wrapperStyles} onPress={onClick}>
